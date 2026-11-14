@@ -1,0 +1,82 @@
+// Лабораторна робота №8. Завдання, варіант 7
+#include <iostream>
+#include <iomanip>
+#include <cstdlib>
+#include <ctime>
+using namespace std;
+
+double squaresProduct(const double *row, int m)
+{
+    double p = 1;
+    for (int j = 0; j < m; j++)
+        p *= *(row + j) * *(row + j);
+    return p;
+}
+
+int main()
+{
+    int n, m;
+
+    cout << "Введіть кількість рядків n (від 1 до 50): ";
+    cin >> n;
+    while (n < 1 || n > 50)
+    {
+        cout << "Помилка: n має бути від 1 до 50. Введіть n ще раз: ";
+        cin >> n;
+    }
+
+    cout << "Введіть кількість стовпчиків m (від 1 до 50): ";
+    cin >> m;
+    while (m < 1 || m > 50)
+    {
+        cout << "Помилка: m має бути від 1 до 50. Введіть m ще раз: ";
+        cin >> m;
+    }
+
+    double **a = new double*[n];
+    for (int i = 0; i < n; i++)
+        a[i] = new double[m];
+
+    srand((unsigned)time(0));
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < m; j++)
+            a[i][j] = (rand() % 1001 - 500) / 100.0;
+
+    cout << endl << "Початковий масив (" << n << " x " << m << "):" << endl;
+    cout << fixed << setprecision(2);
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < m; j++)
+            cout << setw(8) << a[i][j];
+        cout << endl;
+    }
+
+    double (*func)(const double *, int) = squaresProduct;
+
+    double *prod = new double[n];
+
+    cout << endl << "Добуток квадратів елементів кожного рядка:" << endl;
+    cout << defaultfloat << setprecision(8);
+    for (int i = 0; i < n; i++)
+    {
+        prod[i] = func(a[i], m);
+        cout << "  рядок " << setw(2) << i + 1 << ": " << prod[i] << endl;
+    }
+
+    int maxRow = 0;
+    for (int i = 1; i < n; i++)
+    {
+        if (prod[i] > prod[maxRow])
+            maxRow = i;
+    }
+
+    cout << endl << "Максимальний добуток квадратів: " << prod[maxRow] << endl;
+    cout << "Номер рядка з максимальним добутком: " << maxRow + 1 << endl;
+
+    delete[] prod;
+    for (int i = 0; i < n; i++)
+        delete[] a[i];
+    delete[] a;
+
+    return 0;
+}
